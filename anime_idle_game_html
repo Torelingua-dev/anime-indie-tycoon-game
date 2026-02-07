@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Legends - Idle Tycoon</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #ff6b9d;
+            --secondary: #c44569;
+            --accent: #feca57;
+            --dark: #1e272e;
+            --darker: #0a0e27;
+            --light: #dfe4ea;
+            --success: #26de81;
+            --warrior: #ff6348;
+            --mage: #4834df;
+            --assassin: #05c46b;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(72, 52, 223, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(5, 196, 107, 0.1) 0%, transparent 50%);
+            animation: bgPulse 10s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(30, 39, 46, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--accent);
+            font-weight: 300;
+        }
+        
+        /* Player Info Bar */
+        .player-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.15), rgba(196, 69, 105, 0.15));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--light);
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+            margin-top: 10px;
+            border: 1px solid rgba(255, 107, 157, 0.3);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+        }
+        
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 25px;
+            background: rgba(30, 39, 46, 0.5);
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 107, 157, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.3);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--accent);
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.5);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Clicker Section */
+        .clicker-area {
+            text-align: center;
+            padding: 40px;
+            background: rgba(30, 39, 46, 0.5);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .click-orb {
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+            background: radial-gradient(circle, var(--primary), var(--secondary));
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 0 50px rgba(255, 107, 157, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: 900;
+            border: 5px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .click-orb::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .click-orb:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 70px rgba(255, 107, 157, 0.8);
+        }
+        
+        .click-orb:active {
+            transform: scale(0.95);
+        }
+        
+        .click-effect {
+            position: absolute;
+            color: var(--accent);
+            font-size: 2em;
+            font-weight: 900;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            text-shadow: 0 0 10px rgba(254, 202, 87, 0.8);
+        }
+        
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-100px); }
+        }
+        
+        /* Upgrade Cards */
+        .upgrade-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .upgrade-card {
+            background: linear-gradient(135deg, rgba(30, 39, 46, 0.8), rgba(10, 14, 39, 0.8));
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .upgrade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            border-color: var(--primary);
+        }
+        
+        .upgrade-card h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .upgrade-card p {
+            color: var(--light);
+            opacity: 0.8;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .upgrade-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Class Selection */
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .class-card {
+            background: linear-gradient(135deg, rgba(30, 39, 46, 0.8), rgba(10, 14, 39, 0.8));
+            border: 3px solid rgba(255, 107, 157, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .class-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.4);
+        }
+        
+        .class-card.selected {
+            border-color: var(--accent);
+            box-shadow: 0 15px 40px rgba(254, 202, 87, 0.6);
+        }
+        
+        .class-icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+        }
+        
+        .class-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .class-warrior { border-color: var(--warrior); }
+        .class-mage { border-color: var(--mage); }
+        .class-assassin { border-color: var(--assassin); }
+        
+        /* Achievement Panel */
+        .achievement-item {
+            background: rgba(30, 39, 46, 0.5);
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .achievement-item.unlocked {
+            border-color: var(--success);
+            background: rgba(38, 222, 129, 0.1);
+        }
+        
+        .achievement-icon {
+            font-size: 2.5em;
+            filter: grayscale(100%);
+        }
+        
+        .achievement-item.unlocked .achievement-icon {
+            filter: grayscale(0%);
+        }
+        
+        /* Settings */
+        .settings-panel {
+            background: rgba(30, 39, 46, 0.5);
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 107, 157, 0.2);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: var(--success);
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            left: 32px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            border: 3px solid var(--primary);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: modalPop 0.3s ease;
+        }
+        
+        @keyframes modalPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .click-orb { width: 200px; height: 200px; }
+            .tabs { flex-direction: column; }
+            .tab-btn { min-width: 100%; }
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--success), #1dd1a1);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(38, 222, 129, 0.5);
+            z-index: 2000;
+            animation: slideIn 0.5s ease, slideOut 0.5s ease 2.5s forwards;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>⚡ ANIME LEGENDS ⚡</h1>
+            <p class="subtitle">Idle Tycoon Adventure</p>
+        </header>
+        
+        <!-- Player Info -->
+        <div class="player-info">
+            <div class="stat-card">
+                <div class="stat-label">💰 Altın</div>
+                <div class="stat-value" id="goldDisplay">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">⚡ Güç</div>
+                <div class="stat-value" id="powerDisplay">1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">📊 Seviye</div>
+                <div class="stat-value" id="levelDisplay">1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">💎 Saniye Kazanç</div>
+                <div class="stat-value" id="idleDisplay">0</div>
+            </div>
+        </div>
+        
+        <!-- XP Bar -->
+        <div class="stat-card">
+            <div class="stat-label">🎯 Deneyim (XP)</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="xpBar" style="width: 0%"></div>
+            </div>
+            <div style="margin-top: 5px; font-size: 0.9em;"><span id="xpDisplay">0</span> / <span id="xpNeeded">100</span></div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('clicker')">🎮 Clicker</button>
+            <button class="tab-btn" onclick="switchTab('idle')">💤 Idle</button>
+            <button class="tab-btn" onclick="switchTab('upgrades')">⬆️ Yükseltmeler</button>
+            <button class="tab-btn" onclick="switchTab('class')">🎭 Sınıf</button>
+            <button class="tab-btn" onclick="switchTab('achievements')">🏆 Başarımlar</button>
+            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Ayarlar</button>
+        </div>
+        
+        <!-- Clicker Tab -->
+        <div class="tab-content active" id="clicker-tab">
+            <div class="clicker-area">
+                <h2 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">Güç Küresi</h2>
+                <div class="click-orb" id="clickOrb" onclick="handleClick(event)">
+                    <span style="position: relative; z-index: 1;">⚡</span>
+                </div>
+                <p style="margin-top: 20px; font-size: 1.2em;">Tıkla başına: <span id="clickPower" style="color: var(--accent); font-weight: 700;">1</span> altın</p>
+            </div>
+        </div>
+        
+        <!-- Idle Tab -->
+        <div class="tab-content" id="idle-tab">
+            <div class="clicker-area">
+                <h2 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">💤 Pasif Kazanç Sistemi</h2>
+                <p style="font-size: 1.3em; margin: 20px 0;">Saniyede: <span id="idleRate" style="color: var(--accent); font-weight: 700;">0</span> altın</p>
+                <p style="opacity: 0.8; margin-bottom: 30px;">Oyun kapalıyken bile altın kazanırsınız!</p>
+                
+                <div class="upgrade-grid">
+                    <div class="upgrade-card">
+                        <h3>🏭 Oto Maden</h3>
+                        <p>Otomatik altın üretimi</p>
+                        <div class="upgrade-info">
+                            <span>Seviye: <span id="mineLvl">0</span></span>
+                            <span>+<span id="mineRate">0</span>/s</span>
+                        </div>
+                        <div class="upgrade-info">
+                            <span>Maliyet: <span id="mineCost">50</span> 💰</span>
+                        </div>
+                        <button class="btn" onclick="buyIdleUpgrade('mine')">Satın Al</button>
+                    </div>
+                    
+                    <div class="upgrade-card">
+                        <h3>🏰 Güç Kulesi</h3>
+                        <p>Sürekli güç üretimi</p>
+                        <div class="upgrade-info">
+                            <span>Seviye: <span id="towerLvl">0</span></span>
+                            <span>+<span id="towerRate">0</span>/s</span>
+                        </div>
+                        <div class="upgrade-info">
+                            <span>Maliyet: <span id="towerCost">200</span> 💰</span>
+                        </div>
+                        <button class="btn" onclick="buyIdleUpgrade('tower')">Satın Al</button>
+                    </div>
+                    
+                    <div class="upgrade-card">
+                        <h3>🌟 Kristal Reaktör</h3>
+                        <p>Gelişmiş enerji üretimi</p>
+                        <div class="upgrade-info">
+                            <span>Seviye: <span id="reactorLvl">0</span></span>
+                            <span>+<span id="reactorRate">0</span>/s</span>
+                        </div>
+                        <div class="upgrade-info">
+                            <span>Maliyet: <span id="reactorCost">1000</span> 💰</span>
+                        </div>
+                        <button class="btn" onclick="buyIdleUpgrade('reactor')">Satın Al</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upgrades Tab -->
+        <div class="tab-content" id="upgrades-tab">
+            <h2 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">⬆️ Güç Yükseltmeleri</h2>
+            <div class="upgrade-grid">
+                <div class="upgrade-card">
+                    <h3>💪 Güç Çarpanı</h3>
+                    <p>Her tıklamada daha fazla altın</p>
+                    <div class="upgrade-info">
+                        <span>Seviye: <span id="powerMultLvl">0</span></span>
+                        <span>Çarpan: x<span id="powerMultVal">1</span></span>
+                    </div>
+                    <div class="upgrade-info">
+                        <span>Maliyet: <span id="powerMultCost">100</span> 💰</span>
+                    </div>
+                    <button class="btn" onclick="buyUpgrade('powerMult')">Yükselt</button>
+                </div>
+                
+                <div class="upgrade-card">
+                    <h3>🎯 Kritik Vuruş</h3>
+                    <p>Şanslı vuruşlar için kritik şans</p>
+                    <div class="upgrade-info">
+                        <span>Seviye: <span id="critLvl">0</span></span>
+                        <span>Şans: %<span id="critChance">0</span></span>
+                    </div>
+                    <div class="upgrade-info">
+                        <span>Maliyet: <span id="critCost">250</span> 💰</span>
+                    </div>
+                    <button class="btn" onclick="buyUpgrade('crit')">Yükselt</button>
+                </div>
+                
+                <div class="upgrade-card">
+                    <h3>⚡ Combo Sistemi</h3>
+                    <p>Hızlı tıklamalar için bonus</p>
+                    <div class="upgrade-info">
+                        <span>Seviye: <span id="comboLvl">0</span></span>
+                        <span>Bonus: x<span id="comboBonus">1</span></span>
+                    </div>
+                    <div class="upgrade-info">
+                        <span>Maliyet: <span id="comboCost">500</span> 💰</span>
+                    </div>
+                    <button class="btn" onclick="buyUpgrade('combo')">Yükselt</button>
+                </div>
+                
+                <div class="upgrade-card">
+                    <h3>🌈 Pasif Güç Bonus</h3>
+                    <p>Tüm idle kazançlarını artırır</p>
+                    <div class="upgrade-info">
+                        <span>Seviye: <span id="idleBonusLvl">0</span></span>
+                        <span>Bonus: +%<span id="idleBonusVal">0</span></span>
+                    </div>
+                    <div class="upgrade-info">
+                        <span>Maliyet: <span id="idleBonusCost">750</span> 💰</span>
+                    </div>
+                    <button class="btn" onclick="buyUpgrade('idleBonus')">Yükselt</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Class Tab -->
+        <div class="tab-content" id="class-tab">
+            <h2 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">🎭 Karakter Sınıfı</h2>
+            <p style="text-align: center; margin-bottom: 30px; opacity: 0.9;">Sınıfını seç ve özel bonuslardan faydalan!</p>
+            
+            <div class="class-grid" id="classSelection">
+                <div class="class-card class-warrior" onclick="selectClass('warrior')">
+                    <div class="class-icon">⚔️</div>
+                    <h3 style="color: var(--warrior);">Savaşçı</h3>
+                    <p>Yüksek güç, düşük hız</p>
+                    <p style="margin-top: 10px;">
+                        ✓ Tıklama gücü +50%<br>
+                        ✓ Kritik hasar +100%<br>
+                        ✗ Idle kazanç -25%
+                    </p>
+                </div>
+                
+                <div class="class-card class-mage" onclick="selectClass('mage')">
+                    <div class="class-icon">🔮</div>
+                    <h3 style="color: var(--mage);">Büyücü</h3>
+                    <p>Yüksek yetenek bonusu</p>
+                    <p style="margin-top: 10px;">
+                        ✓ Idle kazanç +75%<br>
+                        ✓ XP kazancı +50%<br>
+                        ✗ Tıklama gücü -25%
+                    </p>
+                </div>
+                
+                <div class="class-card class-assassin" onclick="selectClass('assassin')">
+                    <div class="class-icon">🗡️</div>
+                    <h3 style="color: var(--assassin);">Suikastçı</h3>
+                    <p>Yüksek tıklama çarpanı</p>
+                    <p style="margin-top: 10px;">
+                        ✓ Kritik şans +25%<br>
+                        ✓ Tıklama gücü +25%<br>
+                        ✓ Dengeli oyun stili
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center; background: rgba(30, 39, 46, 0.5); padding: 20px; border-radius: 15px; border: 2px solid rgba(255, 107, 157, 0.3);">
+                <h3 style="margin-bottom: 15px;">Aktif Sınıf: <span id="currentClass" style="color: var(--accent);">Seçilmedi</span></h3>
+                <p id="classDesc" style="opacity: 0.8;">Yukarıdan bir sınıf seçin</p>
+            </div>
+        </div>
+        
+        <!-- Achievements Tab -->
+        <div class="tab-content" id="achievements-tab">
+            <h2 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">🏆 Başarımlar</h2>
+            <div id="achievementList"></div>
+        </div>
+        
+        <!-- Settings Tab -->
+        <div class="tab-content" id="settings-tab">
+            <div class="settings-panel">
+                <h2 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">⚙️ Ayarlar</h2>
+                
+                <div class="setting-row">
+                    <span>🔊 Ses Efektleri</span>
+                    <div class="toggle-switch active" id="soundToggle" onclick="toggleSound()"></div>
+                </div>
+                
+                <div class="setting-row">
+                    <span>💾 Otomatik Kayıt</span>
+                    <div class="toggle-switch active" id="autoSaveToggle" onclick="toggleAutoSave()"></div>
+                </div>
+                
+                <div class="setting-row" style="border-bottom: none;">
+                    <span>☁️ Cloud Save (Simüle)</span>
+                    <div>
+                        <button class="btn" style="width: auto; padding: 8px 20px; margin-right: 10px;" onclick="cloudSave()">Yükle</button>
+                        <button class="btn" style="width: auto; padding: 8px 20px;" onclick="cloudLoad()">İndir</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(255, 107, 157, 0.2);">
+                    <button class="btn" style="background: linear-gradient(135deg, #ff6348, #c44569);" onclick="saveGame()">💾 Manuel Kaydet</button>
+                    <button class="btn" style="background: linear-gradient(135deg, #4834df, #2c3e50); margin-top: 10px;" onclick="exportSave()">📤 Kayıtı Dışa Aktar</button>
+                    <button class="btn" style="background: linear-gradient(135deg, #05c46b, #0a3d62); margin-top: 10px;" onclick="importSave()">📥 Kayıtı İçe Aktar</button>
+                    <button class="btn" style="background: linear-gradient(135deg, #ff5252, #b71c1c); margin-top: 10px;" onclick="resetGame()">🔄 Oyunu Sıfırla</button>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: rgba(0, 0, 0, 0.3); border-radius: 10px; border: 1px solid rgba(255, 107, 157, 0.2);">
+                    <h3 style="margin-bottom: 10px;">📊 İstatistikler</h3>
+                    <p>Toplam Tıklama: <span id="totalClicks" style="color: var(--accent);">0</span></p>
+                    <p>Toplam Kazanılan: <span id="totalEarned" style="color: var(--accent);">0</span> 💰</p>
+                    <p>Oynama Süresi: <span id="playTime" style="color: var(--accent);">0</span> dakika</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Class Selection Modal -->
+    <div class="modal" id="classModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">🎉 Hoş Geldin!</h2>
+            <p style="margin-bottom: 30px;">Anime Legends'a hoş geldin! Başlamak için bir sınıf seç.</p>
+            <button class="btn" onclick="closeModal()">Oyuna Başla</button>
+        </div>
+    </div>
+    
+    <script>
+        // === GAME STATE ===
+        let gameState = {
+            gold: 0,
+            power: 1,
+            level: 1,
+            xp: 0,
+            xpNeeded: 100,
+            clickPower: 1,
+            idleRate: 0,
+            
+            // Class
+            selectedClass: null,
+            
+            // Upgrades
+            upgrades: {
+                powerMult: { level: 0, cost: 100, multiplier: 1 },
+                crit: { level: 0, cost: 250, chance: 0 },
+                combo: { level: 0, cost: 500, bonus: 1 },
+                idleBonus: { level: 0, cost: 750, bonus: 0 }
+            },
+            
+            // Idle
+            idle: {
+                mine: { level: 0, cost: 50, rate: 0 },
+                tower: { level: 0, cost: 200, rate: 0 },
+                reactor: { level: 0, cost: 1000, rate: 0 }
+            },
+            
+            // Stats
+            totalClicks: 0,
+            totalEarned: 0,
+            playTime: 0,
+            comboCount: 0,
+            lastClickTime: 0,
+            
+            // Settings
+            soundEnabled: true,
+            autoSave: true,
+            
+            // Achievements
+            achievements: {
+                firstClick: false,
+                reach100Gold: false,
+                reach1000Gold: false,
+                reach10000Gold: false,
+                level10: false,
+                level25: false,
+                clicks100: false,
+                clicks1000: false,
+                buyUpgrade: false,
+                chooseClass: false
+            }
+        };
+        
+        // === CLASS BONUSES ===
+        const classBonuses = {
+            warrior: {
+                name: 'Savaşçı ⚔️',
+                clickBonus: 1.5,
+                critDamageBonus: 2,
+                idlePenalty: 0.75
+            },
+            mage: {
+                name: 'Büyücü 🔮',
+                idleBonus: 1.75,
+                xpBonus: 1.5,
+                clickPenalty: 0.75
+            },
+            assassin: {
+                name: 'Suikastçı 🗡️',
+                critChanceBonus: 25,
+                clickBonus: 1.25,
+                balanced: true
+            }
+        };
+        
+        // === ACHIEVEMENTS DATA ===
+        const achievementData = {
+            firstClick: { icon: '👆', name: 'İlk Tıklama', desc: 'İlk tıklamayı yap' },
+            reach100Gold: { icon: '💰', name: 'Zengin', desc: '100 altın biriktir' },
+            reach1000Gold: { icon: '💎', name: 'Çok Zengin', desc: '1,000 altın biriktir' },
+            reach10000Gold: { icon: '👑', name: 'Kral', desc: '10,000 altın biriktir' },
+            level10: { icon: '⬆️', name: 'Yükselen Yıldız', desc: 'Seviye 10\'a ulaş' },
+            level25: { icon: '🌟', name: 'Efsane', desc: 'Seviye 25\'e ulaş' },
+            clicks100: { icon: '🖱️', name: 'Tıklayıcı', desc: '100 kez tıkla' },
+            clicks1000: { icon: '⚡', name: 'Hızlı Parmaklar', desc: '1,000 kez tıkla' },
+            buyUpgrade: { icon: '📈', name: 'İlk Yükseltme', desc: 'İlk yükseltmeyi satın al' },
+            chooseClass: { icon: '🎭', name: 'Kimlik Seç', desc: 'Bir sınıf seç' }
+        };
+        
+        // === INITIALIZATION ===
+        window.onload = function() {
+            loadGame();
+            updateUI();
+            renderAchievements();
+            
+            // Show modal if no class selected
+            if (!gameState.selectedClass) {
+                document.getElementById('classModal').classList.add('active');
+            }
+            
+            // Start game loops
+            setInterval(idleLoop, 1000); // Idle income every second
+            setInterval(updatePlayTime, 60000); // Update play time every minute
+            setInterval(() => { if (gameState.autoSave) saveGame(); }, 30000); // Auto-save every 30s
+            
+            // Offline progress
+            calculateOfflineProgress();
+        };
+        
+        // === TABS ===
+        function switchTab(tabName) {
+            // Remove active from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active to clicked tab
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+        
+        // === CLICK HANDLER ===
+        function handleClick(event) {
+            // Calculate click power
+            let baseClick = gameState.clickPower * gameState.upgrades.powerMult.multiplier;
+            
+            // Apply class bonuses
+            if (gameState.selectedClass === 'warrior') {
+                baseClick *= classBonuses.warrior.clickBonus;
+            } else if (gameState.selectedClass === 'mage') {
+                baseClick *= classBonuses.mage.clickPenalty;
+            } else if (gameState.selectedClass === 'assassin') {
+                baseClick *= classBonuses.assassin.clickBonus;
+            }
+            
+            // Combo system
+            const now = Date.now();
+            if (now - gameState.lastClickTime < 500) {
+                gameState.comboCount++;
+                if (gameState.comboCount > 5 && gameState.upgrades.combo.level > 0) {
+                    baseClick *= gameState.upgrades.combo.bonus;
+                }
+            } else {
+                gameState.comboCount = 0;
+            }
+            gameState.lastClickTime = now;
+            
+            // Critical hit
+            let finalGold = baseClick;
+            const critChance = gameState.upgrades.crit.chance + (gameState.selectedClass === 'assassin' ? classBonuses.assassin.critChanceBonus : 0);
+            if (Math.random() * 100 < critChance) {
+                const critMult = gameState.selectedClass === 'warrior' ? classBonuses.warrior.critDamageBonus : 2;
+                finalGold *= critMult;
+                showClickEffect(event, Math.floor(finalGold), true);
+            } else {
+                showClickEffect(event, Math.floor(finalGold), false);
+            }
+            
+            // Add gold and XP
+            gameState.gold += finalGold;
+            gameState.totalEarned += finalGold;
+            gameState.totalClicks++;
+            
+            // XP gain
+            let xpGain = 1;
+            if (gameState.selectedClass === 'mage') {
+                xpGain *= classBonuses.mage.xpBonus;
+            }
+            addXP(xpGain);
+            
+            // Achievements
+            checkAchievement('firstClick');
+            if (gameState.totalClicks >= 100) checkAchievement('clicks100');
+            if (gameState.totalClicks >= 1000) checkAchievement('clicks1000');
+            
+            updateUI();
+        }
+        
+        // === CLICK EFFECT ===
+        function showClickEffect(event, amount, isCrit) {
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.textContent = '+' + formatNumber(amount);
+            if (isCrit) {
+                effect.style.color = '#ff6348';
+                effect.textContent += ' CRIT!';
+            }
+            
+            effect.style.left = event.clientX + 'px';
+            effect.style.top = event.clientY + 'px';
+            
+            document.body.appendChild(effect);
+            setTimeout(() => effect.remove(), 1000);
+        }
+        
+        // === IDLE LOOP ===
+        function idleLoop() {
+            let idleGain = gameState.idleRate;
+            
+            // Apply class bonuses
+            if (gameState.selectedClass === 'mage') {
+                idleGain *= classBonuses.mage.idleBonus;
+            } else if (gameState.selectedClass === 'warrior') {
+                idleGain *= classBonuses.warrior.idlePenalty;
+            }
+            
+            // Apply idle bonus upgrade
+            idleGain *= (1 + gameState.upgrades.idleBonus.bonus / 100);
+            
+            gameState.gold += idleGain;
+            gameState.totalEarned += idleGain;
+            
+            updateUI();
+        }
+        
+        // === BUY UPGRADE ===
+        function buyUpgrade(type) {
+            const upgrade = gameState.upgrades[type];
+            if (gameState.gold >= upgrade.cost) {
+                gameState.gold -= upgrade.cost;
+                upgrade.level++;
+                
+                // Update upgrade effects
+                switch(type) {
+                    case 'powerMult':
+                        upgrade.multiplier = 1 + (upgrade.level * 0.5);
+                        upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                        break;
+                    case 'crit':
+                        upgrade.chance = upgrade.level * 5;
+                        upgrade.cost = Math.floor(upgrade.cost * 1.6);
+                        break;
+                    case 'combo':
+                        upgrade.bonus = 1 + (upgrade.level * 0.3);
+                        upgrade.cost = Math.floor(upgrade.cost * 1.7);
+                        break;
+                    case 'idleBonus':
+                        upgrade.bonus = upgrade.level * 10;
+                        upgrade.cost = Math.floor(upgrade.cost * 1.8);
+                        break;
+                }
+                
+                checkAchievement('buyUpgrade');
+                updateUI();
+            }
+        }
+        
+        // === BUY IDLE UPGRADE ===
+        function buyIdleUpgrade(type) {
+            const upgrade = gameState.idle[type];
+            if (gameState.gold >= upgrade.cost) {
+                gameState.gold -= upgrade.cost;
+                upgrade.level++;
+                
+                // Update idle rates
+                switch(type) {
+                    case 'mine':
+                        upgrade.rate = upgrade.level * 0.5;
+                        upgrade.cost = Math.floor(upgrade.cost * 1.3);
+                        break;
+                    case 'tower':
+                        upgrade.rate = upgrade.level * 2;
+                        upgrade.cost = Math.floor(upgrade.cost * 1.4);
+                        break;
+                    case 'reactor':
+                        upgrade.rate = upgrade.level * 10;
+                        upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                        break;
+                }
+                
+                // Recalculate total idle rate
+                gameState.idleRate = gameState.idle.mine.rate + gameState.idle.tower.rate + gameState.idle.reactor.rate;
+                
+                updateUI();
+            }
+        }
+        
+        // === XP AND LEVELING ===
+        function addXP(amount) {
+            gameState.xp += amount;
+            
+            while (gameState.xp >= gameState.xpNeeded) {
+                gameState.xp -= gameState.xpNeeded;
+                gameState.level++;
+                gameState.xpNeeded = Math.floor(gameState.xpNeeded * 1.5);
+                gameState.power = gameState.level;
+                gameState.clickPower = gameState.level;
+                
+                showNotification('🎉 Seviye Atladın! Şimdi Seviye ' + gameState.level);
+                
+                if (gameState.level >= 10) checkAchievement('level10');
+                if (gameState.level >= 25) checkAchievement('level25');
+            }
+        }
+        
+        // === CLASS SELECTION ===
+        function selectClass(className) {
+            gameState.selectedClass = className;
+            
+            document.querySelectorAll('.class-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.class-card').classList.add('selected');
+            
+            const bonus = classBonuses[className];
+            document.getElementById('currentClass').textContent = bonus.name;
+            
+            let desc = '';
+            if (className === 'warrior') {
+                desc = 'Tıklama gücü artırıldı, idle kazanç azaldı';
+            } else if (className === 'mage') {
+                desc = 'Idle kazanç ve XP artırıldı, tıklama gücü azaldı';
+            } else if (className === 'assassin') {
+                desc = 'Kritik şans ve dengeli bonuslar';
+            }
+            document.getElementById('classDesc').textContent = desc;
+            
+            checkAchievement('chooseClass');
+            showNotification('✨ Sınıf Seçildi: ' + bonus.name);
+        }
+        
+        // === ACHIEVEMENTS ===
+        function checkAchievement(id) {
+            if (!gameState.achievements[id]) {
+                gameState.achievements[id] = true;
+                const ach = achievementData[id];
+                showNotification('🏆 Başarım Açıldı: ' + ach.name);
+                renderAchievements();
+            }
+            
+            // Gold achievements
+            if (gameState.gold >= 100) checkAchievement('reach100Gold');
+            if (gameState.gold >= 1000) checkAchievement('reach1000Gold');
+            if (gameState.gold >= 10000) checkAchievement('reach10000Gold');
+        }
+        
+        function renderAchievements() {
+            const container = document.getElementById('achievementList');
+            container.innerHTML = '';
+            
+            for (const [id, data] of Object.entries(achievementData)) {
+                const unlocked = gameState.achievements[id];
+                const item = document.createElement('div');
+                item.className = 'achievement-item' + (unlocked ? ' unlocked' : '');
+                item.innerHTML = `
+                    <div class="achievement-icon">${data.icon}</div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">${data.name}</div>
+                        <div style="opacity: 0.8; font-size: 0.9em;">${data.desc}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            }
+        }
+        
+        // === UI UPDATE ===
+        function updateUI() {
+            // Main stats
+            document.getElementById('goldDisplay').textContent = formatNumber(gameState.gold);
+            document.getElementById('powerDisplay').textContent = gameState.power;
+            document.getElementById('levelDisplay').textContent = gameState.level;
+            document.getElementById('idleDisplay').textContent = formatNumber(gameState.idleRate);
+            
+            // XP
+            const xpPercent = (gameState.xp / gameState.xpNeeded) * 100;
+            document.getElementById('xpBar').style.width = xpPercent + '%';
+            document.getElementById('xpDisplay').textContent = Math.floor(gameState.xp);
+            document.getElementById('xpNeeded').textContent = gameState.xpNeeded;
+            
+            // Click power
+            let displayClick = gameState.clickPower * gameState.upgrades.powerMult.multiplier;
+            if (gameState.selectedClass === 'warrior') displayClick *= classBonuses.warrior.clickBonus;
+            else if (gameState.selectedClass === 'mage') displayClick *= classBonuses.mage.clickPenalty;
+            else if (gameState.selectedClass === 'assassin') displayClick *= classBonuses.assassin.clickBonus;
+            document.getElementById('clickPower').textContent = formatNumber(displayClick);
+            
+            // Upgrades
+            document.getElementById('powerMultLvl').textContent = gameState.upgrades.powerMult.level;
+            document.getElementById('powerMultVal').textContent = gameState.upgrades.powerMult.multiplier.toFixed(1);
+            document.getElementById('powerMultCost').textContent = formatNumber(gameState.upgrades.powerMult.cost);
+            
+            document.getElementById('critLvl').textContent = gameState.upgrades.crit.level;
+            document.getElementById('critChance').textContent = gameState.upgrades.crit.chance;
+            document.getElementById('critCost').textContent = formatNumber(gameState.upgrades.crit.cost);
+            
+            document.getElementById('comboLvl').textContent = gameState.upgrades.combo.level;
+            document.getElementById('comboBonus').textContent = gameState.upgrades.combo.bonus.toFixed(1);
+            document.getElementById('comboCost').textContent = formatNumber(gameState.upgrades.combo.cost);
+            
+            document.getElementById('idleBonusLvl').textContent = gameState.upgrades.idleBonus.level;
+            document.getElementById('idleBonusVal').textContent = gameState.upgrades.idleBonus.bonus;
+            document.getElementById('idleBonusCost').textContent = formatNumber(gameState.upgrades.idleBonus.cost);
+            
+            // Idle upgrades
+            document.getElementById('mineLvl').textContent = gameState.idle.mine.level;
+            document.getElementById('mineRate').textContent = gameState.idle.mine.rate.toFixed(1);
+            document.getElementById('mineCost').textContent = formatNumber(gameState.idle.mine.cost);
+            
+            document.getElementById('towerLvl').textContent = gameState.idle.tower.level;
+            document.getElementById('towerRate').textContent = gameState.idle.tower.rate.toFixed(1);
+            document.getElementById('towerCost').textContent = formatNumber(gameState.idle.tower.cost);
+            
+            document.getElementById('reactorLvl').textContent = gameState.idle.reactor.level;
+            document.getElementById('reactorRate').textContent = gameState.idle.reactor.rate.toFixed(1);
+            document.getElementById('reactorCost').textContent = formatNumber(gameState.idle.reactor.cost);
+            
+            // Idle display
+            let displayIdle = gameState.idleRate;
+            if (gameState.selectedClass === 'mage') displayIdle *= classBonuses.mage.idleBonus;
+            else if (gameState.selectedClass === 'warrior') displayIdle *= classBonuses.warrior.idlePenalty;
+            displayIdle *= (1 + gameState.upgrades.idleBonus.bonus / 100);
+            document.getElementById('idleRate').textContent = formatNumber(displayIdle);
+            
+            // Stats
+            document.getElementById('totalClicks').textContent = formatNumber(gameState.totalClicks);
+            document.getElementById('totalEarned').textContent = formatNumber(gameState.totalEarned);
+            document.getElementById('playTime').textContent = gameState.playTime;
+            
+            // Check achievements
+            checkAchievement();
+        }
+        
+        // === SAVE/LOAD ===
+        function saveGame() {
+            localStorage.setItem('animeIdleGame', JSON.stringify(gameState));
+            showNotification('💾 Oyun kaydedildi!');
+        }
+        
+        function loadGame() {
+            const saved = localStorage.getItem('animeIdleGame');
+            if (saved) {
+                const loaded = JSON.parse(saved);
+                // Merge to handle new properties
+                gameState = { ...gameState, ...loaded };
+            }
+        }
+        
+        function resetGame() {
+            if (confirm('Oyunu sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+                localStorage.removeItem('animeIdleGame');
+                location.reload();
+            }
+        }
+        
+        function exportSave() {
+            const saveData = JSON.stringify(gameState);
+            const blob = new Blob([saveData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'anime_idle_save.json';
+            a.click();
+            showNotification('📤 Kayıt dosyası indirildi!');
+        }
+        
+        function importSave() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        gameState = imported;
+                        saveGame();
+                        updateUI();
+                        renderAchievements();
+                        showNotification('📥 Kayıt başarıyla yüklendi!');
+                    } catch (err) {
+                        alert('Geçersiz kayıt dosyası!');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+        
+        // === CLOUD SAVE (SIMULATED) ===
+        function cloudSave() {
+            // Simulated cloud save - in real app, this would send to server
+            const saveData = JSON.stringify(gameState);
+            localStorage.setItem('cloudSave_anime', saveData);
+            showNotification('☁️ Cloud\'a kaydedildi! (Simüle)');
+            
+            // Real implementation would be:
+            // fetch('/api/save', { 
+            //     method: 'POST', 
+            //     body: JSON.stringify(gameState),
+            //     headers: { 'Content-Type': 'application/json' }
+            // });
+        }
+        
+        function cloudLoad() {
+            // Simulated cloud load
+            const cloudData = localStorage.getItem('cloudSave_anime');
+            if (cloudData) {
+                gameState = JSON.parse(cloudData);
+                updateUI();
+                renderAchievements();
+                showNotification('☁️ Cloud\'dan yüklendi! (Simüle)');
+            } else {
+                showNotification('❌ Cloud kaydı bulunamadı!');
+            }
+            
+            // Real implementation would be:
+            // fetch('/api/load')
+            //     .then(res => res.json())
+            //     .then(data => { gameState = data; updateUI(); });
+        }
+        
+        // === OFFLINE PROGRESS ===
+        function calculateOfflineProgress() {
+            const lastSave = localStorage.getItem('lastSaveTime');
+            if (lastSave) {
+                const now = Date.now();
+                const timePassed = Math.floor((now - parseInt(lastSave)) / 1000); // seconds
+                const offlineGold = gameState.idleRate * timePassed;
+                
+                if (offlineGold > 0) {
+                    gameState.gold += offlineGold;
+                    showNotification(`💤 Offline kazanç: ${formatNumber(offlineGold)} altın! (${Math.floor(timePassed/60)} dakika)`);
+                }
+            }
+            localStorage.setItem('lastSaveTime', Date.now());
+        }
+        
+        // === SETTINGS ===
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            document.getElementById('soundToggle').classList.toggle('active');
+        }
+        
+        function toggleAutoSave() {
+            gameState.autoSave = !gameState.autoSave;
+            document.getElementById('autoSaveToggle').classList.toggle('active');
+        }
+        
+        function updatePlayTime() {
+            gameState.playTime++;
+        }
+        
+        // === UTILITIES ===
+        function formatNumber(num) {
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return Math.floor(num);
+        }
+        
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3000);
+        }
+        
+        function closeModal() {
+            document.getElementById('classModal').classList.remove('active');
+        }
+        
+        // Save on close
+        window.addEventListener('beforeunload', () => {
+            if (gameState.autoSave) saveGame();
+            localStorage.setItem('lastSaveTime', Date.now());
+        });
+    </script>
+</body>
+</html>
